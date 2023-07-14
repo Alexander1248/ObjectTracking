@@ -91,18 +91,18 @@ public class Window extends JFrame {
             public void mousePressed(MouseEvent e) {
                 sx = e.getX();
                 sy = e.getY();
-                for (int i = 0; i < Window.this.sources.length; i++) {
-                    if (Math.sqrt(Math.pow(Window.this.sources[i].x * scale + x - sx, 2)
-                            + Math.pow(Window.this.sources[i].y * scale + y - sy, 2)) < 0.7 * scale) {
-                        selected = Window.this.sources[i];
+                for (int i = 0; i < Window.this.trackers.length; i++) {
+                    if (Math.sqrt(Math.pow(Window.this.trackers[i].x * scale + x - sx, 2)
+                            + Math.pow(Window.this.trackers[i].y * scale + y - sy, 2)) < 0.7 * scale) {
+                        selected = Window.this.trackers[i];
                         break;
                     }
                 }
                 if (selected == null) {
-                    for (int i = 0; i < Window.this.trackers.length; i++) {
-                        if (Math.sqrt(Math.pow(Window.this.trackers[i].x * scale + x - sx, 2)
-                                + Math.pow(Window.this.trackers[i].y * scale + y - sy, 2)) < 0.7 * scale) {
-                            selected = Window.this.trackers[i];
+                    for (int i = 0; i < Window.this.sources.length; i++) {
+                        if (Math.sqrt(Math.pow(Window.this.sources[i].x * scale + x - sx, 2)
+                                + Math.pow(Window.this.sources[i].y * scale + y - sy, 2)) < 0.7 * scale) {
+                            selected = Window.this.sources[i];
                             break;
                         }
                     }

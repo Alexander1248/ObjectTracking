@@ -15,8 +15,8 @@ public class App {
                 new Source(30, 30, 10)
         };
         Tracker[] trackers = { new Tracker() };
-        trackers[0].x = 13;
-        trackers[0].y = 5;
+        trackers[0].x = 15;
+        trackers[0].y = 15;
         trackers[0].z = 5;
         Window window = new Window(sources, trackers);
     }
