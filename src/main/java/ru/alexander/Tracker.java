@@ -28,13 +28,46 @@ public class Tracker {
             }
         }
     }
-    public void locate() {
+    public boolean locate() {
+        int idx;
+        double[][] points;
         double[] circle = ssIntersection(data[0], data[1]);
-        double[][] points = csIntersection(circle, data[2]);
-        int idx = nearestToSphere(points[0], points[1], data[3]);
+        if (Double.isNaN(circle[0])) {
+            circle = ssIntersection(data[0], data[2]);
+            if (Double.isNaN(circle[0])) {
+                circle = ssIntersection(data[0], data[3]);
+                points = csIntersection(circle, data[1]);
+                if (Double.isNaN(points[0][0])) {
+                    points = csIntersection(circle, data[2]);
+                    if (Double.isNaN(points[0][0])) return false;
+                    idx = nearestToSphere(points[0], points[1], data[1]);
+                }
+                else idx = nearestToSphere(points[0], points[1], data[2]);
+            }
+            else {
+                points = csIntersection(circle, data[1]);
+                if (Double.isNaN(points[0][0])) {
+                    points = csIntersection(circle, data[3]);
+                    if (Double.isNaN(points[0][0])) return false;
+                    idx = nearestToSphere(points[0], points[1], data[1]);
+                }
+                else idx = nearestToSphere(points[0], points[1], data[3]);
+            }
+        }
+        else {
+            points = csIntersection(circle, data[2]);
+            if (Double.isNaN(points[0][0])) {
+                points = csIntersection(circle, data[3]);
+                if (Double.isNaN(points[0][0])) return false;
+                idx = nearestToSphere(points[0], points[1], data[2]);
+            }
+            else idx = nearestToSphere(points[0], points[1], data[3]);
+        }
+
         cx = points[idx][0];
         cy = points[idx][1];
         cz = points[idx][2];
+        return true;
     }
 
     private double[] ssIntersection(double[] s1, double[] s2) {
@@ -70,10 +103,6 @@ public class Tracker {
         double v2x = dy * v1z - dz * v1y;
         double v2y = dz * v1x - dx * v1z;
         double v2z = dx * v1y - dy * v1x;
-
-        if (Double.isNaN(r0)) {
-            System.out.println("NaN");
-        }
         return new double[] {
                 r0, x0, y0, z0,
                 v1x, v1y, v1z,
