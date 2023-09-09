@@ -1,7 +1,5 @@
 package ru.alexander;
 
-import java.util.Arrays;
-
 public abstract class Tracker {
     private double cx;
     private double cy;
@@ -13,23 +11,23 @@ public abstract class Tracker {
     public boolean locate() {
         int idx;
         double[][] points;
-        double[] circle = ssIntersection(data[0], data[1]);
+        double[] circle = sphereSphereIntersection(data[0], data[1]);
         if (Double.isNaN(circle[0])) {
-            circle = ssIntersection(data[0], data[2]);
+            circle = sphereSphereIntersection(data[0], data[2]);
             if (Double.isNaN(circle[0])) {
-                circle = ssIntersection(data[0], data[3]);
-                points = csIntersection(circle, data[1]);
+                circle = sphereSphereIntersection(data[0], data[3]);
+                points = circleSphereIntersection(circle, data[1]);
                 if (Double.isNaN(points[0][0])) {
-                    points = csIntersection(circle, data[2]);
+                    points = circleSphereIntersection(circle, data[2]);
                     if (Double.isNaN(points[0][0])) return false;
                     idx = nearestToSphere(points[0], points[1], data[1]);
                 }
                 else idx = nearestToSphere(points[0], points[1], data[2]);
             }
             else {
-                points = csIntersection(circle, data[1]);
+                points = circleSphereIntersection(circle, data[1]);
                 if (Double.isNaN(points[0][0])) {
-                    points = csIntersection(circle, data[3]);
+                    points = circleSphereIntersection(circle, data[3]);
                     if (Double.isNaN(points[0][0])) return false;
                     idx = nearestToSphere(points[0], points[1], data[1]);
                 }
@@ -37,9 +35,9 @@ public abstract class Tracker {
             }
         }
         else {
-            points = csIntersection(circle, data[2]);
+            points = circleSphereIntersection(circle, data[2]);
             if (Double.isNaN(points[0][0])) {
-                points = csIntersection(circle, data[3]);
+                points = circleSphereIntersection(circle, data[3]);
                 if (Double.isNaN(points[0][0])) return false;
                 idx = nearestToSphere(points[0], points[1], data[2]);
             }
@@ -52,7 +50,7 @@ public abstract class Tracker {
         return true;
     }
 
-    private double[] ssIntersection(double[] s1, double[] s2) {
+    private double[] sphereSphereIntersection(double[] s1, double[] s2) {
         double dx = s2[1] - s1[1];
         double dy = s2[2] - s1[2];
         double dz = s2[3] - s1[3];
@@ -91,7 +89,7 @@ public abstract class Tracker {
                 v2x, v2y, v2z
         };
     }
-    private double[][] csIntersection(double[] c, double[] s) {
+    private double[][] circleSphereIntersection(double[] c, double[] s) {
         double nx = c[5] * c[9] - c[6] * c[8];
         double ny = c[6] * c[7] - c[4] * c[9];
         double nz = c[4] * c[8] - c[5] * c[7];
