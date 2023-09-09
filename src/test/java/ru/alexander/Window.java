@@ -1,7 +1,4 @@
-package ru.alexander.window;
-
-import ru.alexander.Source;
-import ru.alexander.Tracker;
+package ru.alexander;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +14,8 @@ public class Window extends JFrame {
     private double scale = 30;
 
 
-    private Source[] sources;
-    private Tracker[] trackers;
+    private SourceImpl[] sources;
+    private TrackerImpl[] trackers;
     private int sx, sy;
     private boolean drag;
     private Object selected;
@@ -33,7 +30,7 @@ public class Window extends JFrame {
 
     private final BufferStrategy bufferStrategy;
 
-    public Window(Source[] sources, Tracker[] trackers) throws HeadlessException {
+    public Window(SourceImpl[] sources, TrackerImpl[] trackers) throws HeadlessException {
         super("Tracker");
         this.sources = sources;
         this.trackers = trackers;
@@ -46,7 +43,6 @@ public class Window extends JFrame {
         setIgnoreRepaint(true);
         createBufferStrategy(2);
         bufferStrategy = getBufferStrategy();
-        repaint();
 
         WindowMenu windowMenu = new WindowMenu(Window.this);
 
@@ -68,15 +64,15 @@ public class Window extends JFrame {
                     my = 50;
                 }
                 else {
-                    if (selected.getClass() == Source.class) {
+                    if (selected.getClass() == SourceImpl.class) {
                         Source source = (Source) selected;
                         source.z -= e.getPreciseWheelRotation() * 0.1;
                         msg = String.format("Z: %1.1f", ((Source) selected).z);
                     }
                     else {
-                        Tracker tracker = (Tracker) selected;
+                        TrackerImpl tracker = (TrackerImpl) selected;
                         tracker.z -= e.getPreciseWheelRotation() * 0.1;
-                        msg = String.format("Z: %1.1f", ((Tracker) selected).z);
+                        msg = String.format("Z: %1.1f", tracker.z);
                     }
                     mx = sx;
                     my = (int) (sy + scale);
@@ -141,7 +137,7 @@ public class Window extends JFrame {
                         x += scale * (e.getX() - sx) * 0.02;
                         y += scale * (e.getY() - sy) * 0.02;
                     } else {
-                        if (selected.getClass() == Source.class) {
+                        if (selected.getClass() == SourceImpl.class) {
                             Source source = (Source) selected;
                             if (gridScale == 0) {
                                 source.x = (sx - x) / scale;
@@ -152,7 +148,7 @@ public class Window extends JFrame {
                                 source.y = Math.round((sy - y) / (scale * gridScale)) * gridScale;
                             }
                         } else {
-                            Tracker tracker = (Tracker) selected;
+                            TrackerImpl tracker = (TrackerImpl) selected;
                             if (gridScale == 0) {
                                 tracker.x = (sx - x) / scale;
                                 tracker.y = (sy - y) / scale;
@@ -169,11 +165,14 @@ public class Window extends JFrame {
                 }
             }
         });
+        repaint();
     }
 
     @Override
     public void paint(Graphics graphics) {
-        Graphics g = bufferStrategy.getDrawGraphics();
+        Graphics g;
+        if (bufferStrategy == null) g = graphics;
+        else g = bufferStrategy.getDrawGraphics();
         super.paint(g);
 
         if (System.currentTimeMillis() < textTime) g.drawString(msg, mx, my);
@@ -205,17 +204,19 @@ public class Window extends JFrame {
                     (int) (0.3 * scale), (int) (0.3 * scale));
         }
         g.dispose();
-        bufferStrategy.show();
+
+        if (bufferStrategy != null)
+            bufferStrategy.show();
     }
 
     private static class ObjectMenu extends JPopupMenu {
         public ObjectMenu(Window window, Object object) {
             JMenuItem delete = new JMenuItem("Delete");
             delete.addActionListener(e -> {
-                if (object.getClass() == Source.class) {
-                    Source source = (Source) object;
-                    Source[] sources = window.sources;
-                    Source[] buff = new Source[sources.length - 1];
+                if (object.getClass() == SourceImpl.class) {
+                    SourceImpl source = (SourceImpl) object;
+                    SourceImpl[] sources = window.sources;
+                    SourceImpl[] buff = new SourceImpl[sources.length - 1];
                     for (int i = 0; i < sources.length - 1; i++) {
                         if (sources[i] != source) buff[i] = sources[i];
                         else {
@@ -226,9 +227,9 @@ public class Window extends JFrame {
                     window.sources = buff;
 
                 } else {
-                    Tracker tracker = (Tracker) object;
-                    Tracker[] trackers = window.trackers;
-                    Tracker[] buff = new Tracker[trackers.length - 1];
+                    TrackerImpl tracker = (TrackerImpl) object;
+                    TrackerImpl[] trackers = window.trackers;
+                    TrackerImpl[] buff = new TrackerImpl[trackers.length - 1];
                     for (int i = 0; i < trackers.length - 1; i++) {
                         if (trackers[i] != tracker) buff[i] = trackers[i];
                         else {
@@ -249,16 +250,16 @@ public class Window extends JFrame {
 
             JMenuItem setSpeed = new JMenuItem("Set Speed");
             setSpeed.addActionListener(e -> {
-                String s = JOptionPane.showInputDialog("Set signal speed:", Source.signalSpeed);
-                if (s != null) Source.signalSpeed = Double.parseDouble(s);
+                String s = JOptionPane.showInputDialog("Set signal speed:", SourceImpl.signalSpeed);
+                if (s != null) SourceImpl.signalSpeed = Double.parseDouble(s);
                 getComponent().repaint();
             });
             add(setSpeed);
 
             JMenuItem setNoise = new JMenuItem("Set Noisiness");
             setNoise.addActionListener(e -> {
-                String s = JOptionPane.showInputDialog("Set noisiness:", Source.signalNoiseFactor);
-                if (s != null) Source.signalNoiseFactor = Double.parseDouble(s);
+                String s = JOptionPane.showInputDialog("Set noisiness:", SourceImpl.signalNoiseFactor);
+                if (s != null) SourceImpl.signalNoiseFactor = Double.parseDouble(s);
                 getComponent().repaint();
             });
             add(setNoise);
@@ -273,9 +274,9 @@ public class Window extends JFrame {
             JMenuItem addSource = new JMenuItem("Add Source");
             addSource.addActionListener(e -> {
                 int length = window.sources.length;
-                Source[] sources = new Source[length + 1];
+                SourceImpl[] sources = new SourceImpl[length + 1];
                 System.arraycopy(window.sources, 0, sources, 0, length);
-                sources[length] = new Source(
+                sources[length] = new SourceImpl(
                         (x - window.x) / window.scale,
                         (y - window.y) / window.scale, 0);
                 window.sources = sources;
@@ -286,9 +287,9 @@ public class Window extends JFrame {
             JMenuItem addTracker = new JMenuItem("Add Tracker");
             addTracker.addActionListener(e -> {
                 int length = window.trackers.length;
-                Tracker[] trackers = new Tracker[length + 1];
+                TrackerImpl[] trackers = new TrackerImpl[length + 1];
                 System.arraycopy(window.trackers, 0, trackers, 0, length);
-                trackers[length] = new Tracker();
+                trackers[length] = new TrackerImpl();
                 trackers[length].x = (x - window.x) / window.scale;
                 trackers[length].y = (y - window.y) / window.scale;
                 window.trackers = trackers;

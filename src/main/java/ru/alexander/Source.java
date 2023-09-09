@@ -1,10 +1,8 @@
 package ru.alexander;
 
-import java.util.Objects;
+import java.nio.ByteBuffer;
 
-public final class Source {
-    public static double signalSpeed = 3e8;
-    public static double signalNoiseFactor = 0;
+public abstract class Source {
     public double x;
     public double y;
     public double z;
@@ -16,8 +14,5 @@ public final class Source {
     }
 
 
-    public double sendSignal(Tracker tracker) {
-        return Math.sqrt(Math.pow(x - tracker.x, 2) + Math.pow(y - tracker.y, 2)
-                + Math.pow(z - tracker.z, 2)) / signalSpeed + (Math.random() - 0.5) * signalNoiseFactor;
-    }
+    public abstract double sendSignal(ByteBuffer data);
 }
