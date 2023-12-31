@@ -7,8 +7,6 @@ public abstract class IterativeTracker {
 
     protected double[][] data;
 
-    private double avgErr = 1;
-
     public abstract void trackSignals(Source[] sources);
     public boolean locate(double startT, double maxIterations) {
         double err = 0;
@@ -47,9 +45,7 @@ public abstract class IterativeTracker {
             }
             it++;
         } while (it < maxIterations);
-        avgErr *= 0.975;
-        avgErr += err * 0.025;
-        System.out.printf("Error: %1.3f\n", avgErr);
+        System.out.printf("Error: %1.3f\n", err);
         return true;
     }
 
