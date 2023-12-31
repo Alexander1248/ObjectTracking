@@ -1,4 +1,6 @@
-package ru.alexander;
+package ru.alexander.iterative;
+
+import ru.alexander.Source;
 
 import javax.swing.*;
 import java.awt.*;
@@ -192,7 +194,7 @@ public class Window extends JFrame {
                     (int) (0.7 * scale), (int) (0.7 * scale));
 
             trackers[i].trackSignals(sources);
-            trackers[i].locate();
+            if (!trackers[i].locate(10, 1000)) System.out.println("Error!");
 
             int rc = 0, gc = 0, bc = 0;
             if (Math.abs(trackers[i].getCZ() - trackers[i].z) > precision) rc = 255;

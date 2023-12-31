@@ -1,4 +1,4 @@
-package ru.alexander;
+package ru.alexander.simple;
 
 
 public class App {
