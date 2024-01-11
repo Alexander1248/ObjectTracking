@@ -1,13 +1,13 @@
-package ru.alexander.iterative;
+package ru.alexander.iterative.propagation;
 
 
-import ru.alexander.IterativeTracker;
 import ru.alexander.Source;
+import ru.alexander.iterative.ProgressionTracker;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public class TrackerImpl extends IterativeTracker {
+public class TrackerImpl extends ProgressionTracker {
     public double x;
     public double y;
     public double z;

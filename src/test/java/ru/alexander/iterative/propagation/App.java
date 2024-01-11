@@ -1,4 +1,4 @@
-package ru.alexander.simple;
+package ru.alexander.iterative.propagation;
 
 
 public class App {

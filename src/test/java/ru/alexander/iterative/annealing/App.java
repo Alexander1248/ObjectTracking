@@ -1,4 +1,4 @@
-package ru.alexander.iterative;
+package ru.alexander.iterative.annealing;
 
 
 public class App {
@@ -16,6 +16,6 @@ public class App {
         trackers[0].x = 15;
         trackers[0].y = 15;
         trackers[0].z = 5;
-        Window window = new Window(sources, trackers);
+        new Window(sources, trackers);
     }
 }

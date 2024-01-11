@@ -1,4 +1,4 @@
-package ru.alexander.iterative;
+package ru.alexander.iterative.propagation;
 
 
 import ru.alexander.Source;

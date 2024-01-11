@@ -1,4 +1,4 @@
-package ru.alexander.iterative;
+package ru.alexander.iterative.annealing;
 
 import ru.alexander.Source;
 
@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferStrategy;
+import java.util.List;
 
 public class Window extends JFrame {
     private double x = 0;
@@ -204,6 +205,19 @@ public class Window extends JFrame {
             g.fillOval((int) ((trackers[i].getCX() - 0.15) * scale + x),
                     (int) ((trackers[i].getCY() - 0.15) * scale + y),
                     (int) (0.3 * scale), (int) (0.3 * scale));
+
+            List<double[]> path = trackers[i].getPath();
+            double[] prev = path.get(0);
+            for (int j = 0; j < path.size(); j++) {
+                double[] curr = path.get(j);
+                g.drawLine(
+                        (int) (prev[0] * scale + x),
+                        (int) (prev[1] * scale + y),
+                        (int) (curr[0] * scale + x),
+                        (int) (curr[1] * scale + y)
+                );
+                prev = curr;
+            }
         }
         g.dispose();
 
